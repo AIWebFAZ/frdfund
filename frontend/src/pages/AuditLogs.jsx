@@ -201,6 +201,7 @@ export default function AuditLogs() {
               <p style={{color: 'var(--muted)'}}>ไม่มีบันทึกการใช้งานที่ตรงกับเงื่อนไข</p>
             </div>
           ) : (
+            <>
               <table className="data-table">
                 <thead>
                   <tr>
@@ -316,6 +317,7 @@ export default function AuditLogs() {
                   </button>
                 </div>
               )}
+            </>
           )}
         </div>
       </div>
