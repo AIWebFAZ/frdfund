@@ -201,18 +201,16 @@ export default function AuditLogs() {
               <p style={{color: 'var(--muted)'}}>ไม่มีบันทึกการใช้งานที่ตรงกับเงื่อนไข</p>
             </div>
           ) : (
-            <>
-              <div className="data-table">
-              <table>
+              <table className="data-table">
                 <thead>
                   <tr>
-                    <th style={{width: '140px'}}>วันที่-เวลา</th>
-                    <th style={{width: '120px'}}>ผู้ใช้</th>
-                    <th style={{width: '100px'}}>การกระทำ</th>
-                    <th style={{width: '120px'}}>ตาราง</th>
-                    <th style={{width: '80px'}}>Record ID</th>
+                    <th>วันที่-เวลา</th>
+                    <th>ผู้ใช้</th>
+                    <th>การกระทำ</th>
+                    <th>ตาราง</th>
+                    <th>Record ID</th>
                     <th>รายละเอียด</th>
-                    <th style={{width: '120px'}}>IP Address</th>
+                    <th>IP Address</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,7 +293,6 @@ export default function AuditLogs() {
                   ))}
                 </tbody>
               </table>
-            </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
@@ -318,8 +315,7 @@ export default function AuditLogs() {
                     ถัดไป →
                   </button>
                 </div>
-              )}
-            </>
+              )
           )}
         </div>
       </div>
