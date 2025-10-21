@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import config from '../../config'
 
 export default function Step1SelectOrg({ data, updateData }){
   const [search, setSearch] = useState('')
