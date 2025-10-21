@@ -193,7 +193,7 @@ export default function AuditLogs() {
         </div>
 
         {/* Logs Table Card */}
-        <div className="card" style={{padding: 0}}>
+        <div className="card" style={{padding: 0, overflow: 'hidden'}}>
           {logs.length === 0 ? (
             <div style={{textAlign: 'center', padding: '60px 20px'}}>
               <div style={{fontSize: '48px', marginBottom: '20px'}}>📋</div>
@@ -202,16 +202,17 @@ export default function AuditLogs() {
             </div>
           ) : (
             <>
-              <table className="data-table">
+              <div style={{overflowX: 'auto'}}>
+              <table className="data-table" style={{width: '100%', minWidth: '1000px'}}>
                 <thead>
                   <tr>
-                    <th>วันที่-เวลา</th>
-                    <th>ผู้ใช้</th>
-                    <th>การกระทำ</th>
-                    <th>ตาราง</th>
-                    <th>Record ID</th>
-                    <th>รายละเอียด</th>
-                    <th>IP Address</th>
+                    <th style={{minWidth: '140px'}}>วันที่-เวลา</th>
+                    <th style={{minWidth: '120px'}}>ผู้ใช้</th>
+                    <th style={{minWidth: '100px'}}>การกระทำ</th>
+                    <th style={{minWidth: '120px'}}>ตาราง</th>
+                    <th style={{minWidth: '80px'}}>Record ID</th>
+                    <th style={{minWidth: '200px'}}>รายละเอียด</th>
+                    <th style={{minWidth: '150px'}}>IP Address</th>
                   </tr>
                 </thead>
                 <tbody>
