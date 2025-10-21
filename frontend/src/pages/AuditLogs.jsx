@@ -295,6 +295,7 @@ export default function AuditLogs() {
                   ))}
                 </tbody>
               </table>
+              </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
