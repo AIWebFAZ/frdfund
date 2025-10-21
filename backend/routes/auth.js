@@ -38,6 +38,7 @@ router.post('/login', async (req, res) => {
     const primaryRole = user.role;
     const primaryProvince = user.province;
     const roles = [user.role]; // array ที่มี role เดียว
+    const provinces = user.province ? [user.province] : []; // array ของ provinces
 
     const token = jwt.sign(
       { 
