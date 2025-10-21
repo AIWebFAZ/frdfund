@@ -172,7 +172,7 @@ export default function AuditLogDetail() {
                   IP Address
                 </td>
                 <td style={{padding: '12px'}}>
-                  {log.ip_address || '-'}
+                  {log.ip_address ? log.ip_address.replace(/^::ffff:/, '') : '-'}
                 </td>
               </tr>
             </tbody>

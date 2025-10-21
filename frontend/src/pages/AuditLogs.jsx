@@ -280,7 +280,7 @@ export default function AuditLogs() {
                         )}
                       </td>
                       <td style={{fontSize: '12px', color: 'var(--muted)'}}>
-                        <div>{log.ip_address || '-'}</div>
+                        <div>{log.ip_address ? log.ip_address.replace(/^::ffff:/, '') : '-'}</div>
                         <div style={{marginTop: '5px'}}>
                           <button 
                             className="btn secondary" 
