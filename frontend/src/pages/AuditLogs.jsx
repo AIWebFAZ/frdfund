@@ -315,7 +315,7 @@ export default function AuditLogs() {
                     ถัดไป →
                   </button>
                 </div>
-              )
+              )}
           )}
         </div>
       </div>
