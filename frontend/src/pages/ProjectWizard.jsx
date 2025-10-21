@@ -70,6 +70,20 @@ export default function ProjectWizard(){
   }
 
   async function handleSaveDraft(){
+    // ตรวจสอบข้อมูลขั้นต่ำ
+    if (!projectData.organization) {
+      alert('กรุณาเลือกองค์กรก่อน')
+      return
+    }
+    if (!projectData.projectInfo.project_name) {
+      alert('กรุณากรอกชื่อโครงการก่อน (ขั้นตอนที่ 2)')
+      return
+    }
+    if (!projectData.projectInfo.total_budget) {
+      alert('กรุณากรอกงบประมาณก่อน (ขั้นตอนที่ 2)')
+      return
+    }
+
     setSaving(true)
     try {
       const token = localStorage.getItem('token')
