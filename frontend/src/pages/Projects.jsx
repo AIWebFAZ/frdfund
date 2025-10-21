@@ -129,7 +129,7 @@ export default function Projects(){
                     <td>
                       <button 
                         className="btn-icon"
-                        onClick={() => navigate(`/projects/${project.id}`)}
+                        onClick={() => navigate(project.status === 'draft' ? `/projects/${project.id}/edit` : `/projects/${project.id}`)}
                       >
                         👁️
                       </button>

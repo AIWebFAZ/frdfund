@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import config from '../config'
 import Layout from '../components/Layout'
@@ -12,9 +12,11 @@ import Step6Assets from '../components/project-wizard/Step6Assets'
 import Step7Documents from '../components/project-wizard/Step7Documents'
 import Step8Summary from '../components/project-wizard/Step8Summary'
 
-export default function ProjectWizard(){
+export default function ProjectWizard({ editMode = false }){
   const navigate = useNavigate()
+  const { id } = useParams()
   const [currentStep, setCurrentStep] = useState(1)
+  const [loading, setLoading] = useState(editMode)
   const [projectData, setProjectData] = useState({
     organization: null,
     projectInfo: {},
@@ -25,6 +27,69 @@ export default function ProjectWizard(){
     documents: []
   })
   const [saving, setSaving] = useState(false)
+
+  // โหลดข้อมูลโครงการเมื่ออยู่ในโหมดแก้ไข
+  useEffect(() => {
+    if (editMode && id) {
+      loadProjectData()
+    }
+  }, [editMode, id])
+
+  async function loadProjectData() {
+    try {
+      const token = localStorage.getItem('token')
+      
+      // โหลดข้อมูลโครงการ
+      const projectRes = await axios.get(`${config.API_URL}/api/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const project = projectRes.data
+
+      // โหลดสมาชิก งบประมาณ แผนงาน
+      const [membersRes, budgetRes, plansRes] = await Promise.all([
+        axios.get(`${config.API_URL}/api/projects/${id}/members`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${config.API_URL}/api/projects/${id}/budget`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${config.API_URL}/api/projects/${id}/plans`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ])
+
+      // ตั้งค่าข้อมูลที่โหลดมา
+      setProjectData({
+        organization: {
+          id: project.organization_id,
+          name: project.organization_name,
+          type: project.organization_type,
+          province: project.province
+        },
+        projectInfo: {
+          project_name: project.project_name,
+          project_description: project.project_description,
+          total_budget: project.total_budget,
+          objectives: project.objectives,
+          expected_results: project.expected_results,
+          start_date: project.start_date,
+          end_date: project.end_date,
+          duration_months: project.duration_months
+        },
+        members: membersRes.data || [],
+        budgetItems: budgetRes.data || [],
+        plans: plansRes.data || [],
+        assets: {},
+        documents: []
+      })
+
+      setLoading(false)
+    } catch (error) {
+      console.error('Error loading project:', error)
+      alert('ไม่สามารถโหลดข้อมูลโครงการได้')
+      navigate('/projects')
+    }
+  }
 
   const steps = [
     { num: 1, title: 'เลือกองค์กร', component: Step1SelectOrg },
@@ -70,11 +135,14 @@ export default function ProjectWizard(){
   }
 
   async function handleSaveDraft(){
-    // ตรวจสอบข้อมูลขั้นต่ำ
+    // บันทึกร่าง - ไม่ต้องเช็คว่าข้อมูลครบหรือไม่
+    // อย่างน้อยต้องเลือกองค์กร
     if (!projectData.organization) {
       alert('กรุณาเลือกองค์กรก่อน')
       return
     }
+
+    // ตรวจสอบให้มีชื่อโครงการและงบประมาณ
     if (!projectData.projectInfo.project_name) {
       alert('กรุณากรอกชื่อโครงการก่อน (ขั้นตอนที่ 2)')
       return
@@ -124,11 +192,20 @@ export default function ProjectWizard(){
         }))
       }
 
-      await axios.post(`${config.API_URL}/api/projects`, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      if (editMode && id) {
+        // Update existing draft
+        await axios.put(`${config.API_URL}/api/projects/${id}`, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        alert('แก้ไขแบบร่างสำเร็จ')
+      } else {
+        // Create new draft
+        await axios.post(`${config.API_URL}/api/projects`, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        alert('บันทึกแบบร่างสำเร็จ')
+      }
 
-      alert('บันทึกแบบร่างสำเร็จ')
       navigate('/dashboard')
     } catch (error) {
       console.error('Save draft error:', error)
@@ -204,11 +281,23 @@ export default function ProjectWizard(){
 
   const StepComponent = steps[currentStep - 1].component
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="wizard">
+          <div className="wizard-header">
+            <h1>กำลังโหลดข้อมูล...</h1>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
   return (
     <Layout>
       <div className="wizard">
         <div className="wizard-header">
-          <h1>เพิ่มโครงการใหม่</h1>
+          <h1>{editMode ? 'แก้ไขโครงการ (ร่าง)' : 'เพิ่มโครงการใหม่'}</h1>
           <div className="progress-bar">
             {steps.map(step => (
               <div 

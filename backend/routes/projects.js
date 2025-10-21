@@ -185,6 +185,10 @@ router.post('/', authMiddleware, auditLog('CREATE', 'projects'), async (req, res
       plans
     } = req.body;
 
+    // ถ้าบันทึกร่างแล้วยังไม่มีชื่อโครงการ ใส่ชื่อชั่วคราว
+    const finalProjectName = project_name || `โครงการร่าง - ${organization_name || 'ไม่ระบุ'}`;
+    const finalTotalBudget = total_budget || 0;
+
     // Insert project
     const projectResult = await client.query(
       `INSERT INTO projects (
@@ -194,8 +198,8 @@ router.post('/', authMiddleware, auditLog('CREATE', 'projects'), async (req, res
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'draft', 1)
       RETURNING *`,
       [
-        project_name, project_description, organization_id, organization_name,
-        organization_type, province, total_budget, objectives, expected_results,
+        finalProjectName, project_description, organization_id, organization_name,
+        organization_type, province, finalTotalBudget, objectives, expected_results,
         start_date, end_date, duration_months, req.user.id
       ]
     );

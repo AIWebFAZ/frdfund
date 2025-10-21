@@ -81,9 +81,9 @@ export default function Dashboard(){
           </div>
         </div>
 
-        <div className="section">
-          <div className="section-header">
-            <h2>แผน/โครงการล่าสุด</h2>
+        <div className="card">
+          <div className="card-header">
+            <h2>โครงการล่าสุด</h2>
             <button className="btn primary" onClick={() => navigate('/projects/new')}>
               + เพิ่มโครงการ
             </button>
@@ -94,7 +94,11 @@ export default function Dashboard(){
           ) : (
             <div className="projects-list">
               {projects.map(project => (
-                <div key={project.id} className="project-card" onClick={() => navigate(`/projects/${project.id}`)}>
+                <div 
+                  key={project.id} 
+                  className="project-card" 
+                  onClick={() => navigate(project.status === 'draft' ? `/projects/${project.id}/edit` : `/projects/${project.id}`)}
+                >
                   <div className="project-info">
                     <h3>{project.project_name}</h3>
                     <p className="project-org">{project.organization_name}</p>

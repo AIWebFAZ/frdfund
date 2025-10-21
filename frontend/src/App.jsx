@@ -28,6 +28,7 @@ export default function App(){
       <Route path="/dashboard" element={<PrivateRoute><Dashboard/></PrivateRoute>} />
       <Route path="/projects" element={<PrivateRoute><Projects/></PrivateRoute>} />
       <Route path="/projects/new" element={<PrivateRoute><ProjectWizard/></PrivateRoute>} />
+      <Route path="/projects/:id/edit" element={<PrivateRoute><ProjectWizard editMode={true} /></PrivateRoute>} />
       <Route path="/projects/:id" element={<PrivateRoute><ProjectDetail/></PrivateRoute>} />
       <Route path="/approvals" element={<PrivateRoute><Approvals/></PrivateRoute>} />
       <Route path="/users" element={<PrivateRoute><Users/></PrivateRoute>} />
