@@ -50,7 +50,11 @@ export default function Layout({ children }){
             </>
           )}
         </div>
-        <div className="navbar-user">
+        <div className="navbar-user" style={{
+          borderLeft: '2px solid rgba(255, 255, 255, 0.2)',
+          paddingLeft: '20px',
+          marginLeft: '20px'
+        }}>
           <div className="user-badge">{roleText[user.role] || 'ผู้ใช้'}</div>
           <span className="user-name">{user.full_name}</span>
           <button 
