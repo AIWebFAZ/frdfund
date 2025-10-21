@@ -151,21 +151,20 @@ export default function Users() {
           </button>
         </div>
 
-        <div className="section">
-          <div style={{overflowX: 'auto'}}>
-            <table style={{width: '100%', minWidth: 'auto'}}>
-              <thead>
-                <tr>
-                  <th style={{width: '10%'}}>Username</th>
-                  <th style={{width: '18%'}}>ชื่อ-นามสกุล</th>
-                  <th style={{width: '20%'}}>Email</th>
-                  <th style={{width: '12%'}}>บทบาท</th>
-                  <th style={{width: '12%'}}>จังหวัด</th>
-                  <th style={{width: '8%'}}>สถานะ</th>
-                  <th style={{width: '10%'}}>วันที่สร้าง</th>
-                  <th style={{width: '10%', textAlign: 'center'}}>จัดการ</th>
-                </tr>
-              </thead>
+        <div className="card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>Email</th>
+                <th>บทบาท</th>
+                <th>จังหวัด</th>
+                <th>สถานะ</th>
+                <th>วันที่สร้าง</th>
+                <th style={{textAlign: 'center'}}>จัดการ</th>
+              </tr>
+            </thead>
               <tbody>
                 {users.map(user => (
                   <tr key={user.id}>
@@ -188,7 +187,6 @@ export default function Users() {
                 ))}
               </tbody>
             </table>
-          </div>
         </div>
 
         {showModal && (
