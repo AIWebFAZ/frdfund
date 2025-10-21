@@ -1,0 +1,66 @@
+version: '3.8'
+
+networks:
+  frdfund-network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: frdfund-postgres
+    restart: always
+    networks:
+      - frdfund-network
+    environment:
+      POSTGRES_DB: frdfund
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: frdfund-backend
+    restart: always
+    networks:
+      - frdfund-network
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: frdfund
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-postgres123}
+      JWT_SECRET: ${JWT_SECRET:-frdfund_secret_key_production_2024}
+      JWT_EXPIRE: 7d
+    ports:
+      - "3001:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frdfund-frontend
+    restart: always
+    networks:
+      - frdfund-network
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+    driver: local

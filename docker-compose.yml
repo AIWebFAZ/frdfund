@@ -1,0 +1,82 @@
+version: '3.8'
+
+# Custom network for this project
+networks:
+  frdfund-network:
+    driver: bridge
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: frdfund-postgres
+    restart: always
+    networks:
+      - frdfund-network
+    environment:
+      POSTGRES_DB: frdfund
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: frdfund-backend
+    restart: always
+    networks:
+      - frdfund-network
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: frdfund
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      JWT_SECRET: frdfund_secret_key_production_2024
+      JWT_EXPIRE: 7d
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frdfund-frontend
+    restart: always
+    networks:
+      - frdfund-network
+    ports:
+      - "8080:80"  # เปลี่ยนจาก 80 เป็น 8080 เพื่อไม่ชนกับโปรเจคอื่น
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
