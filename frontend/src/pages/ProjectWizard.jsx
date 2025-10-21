@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import config from '../config'
 import Layout from '../components/Layout'
 import Step1SelectOrg from '../components/project-wizard/Step1SelectOrg'
 import Step2ProjectInfo from '../components/project-wizard/Step2ProjectInfo'
